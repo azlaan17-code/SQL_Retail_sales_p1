@@ -89,20 +89,15 @@ WHERE sale_date = '2022-11-05';
 
 3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
 ```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
+select category, sum(total_Sale) as total_Sales from retail_sales
+	group by category
 ```
 
 4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
 ```sql
-SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
+select category, avg(age) as avg_age from retail_Sales
+	where category = 'Beauty'
+	group by category
 ```
 
 5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
@@ -113,35 +108,21 @@ WHERE total_sale > 1000
 
 6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
 ```sql
-SELECT 
-    category,
-    gender,
-    COUNT(*) as total_trans
-FROM retail_sales
-GROUP 
-    BY 
-    category,
-    gender
-ORDER BY 1
+select gender,category,count(transactions_id) as total_transactions
+	from retail_Sales
+	group by gender,category order by category
 ```
 
 7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
 ```sql
-SELECT 
-       year,
-       month,
-    avg_sale
-FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
+select x.* from
+	(select extract('month' from sale_date) as month,
+	extract(year from sale_date) as year,
+	avg(total_Sale) as avg_sales,
+	rank() over(Partition by  extract(year from sale_date) order by avg(total_Sale) desc ) as rnk
+	from retail_Sales
+	group by month,year) as x
+	where rnk = 1
 ```
 
 8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
